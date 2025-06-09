@@ -9,6 +9,45 @@ use Carbon\Carbon;
 
 class FacturaController extends Controller
 {
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+        $estado = $request->input('estado');
+        $fecha_inicio = $request->input('fecha_inicio');
+        $fecha_fin = $request->input('fecha_fin');
+
+        $query = Factura::with('cliente')
+            ->when($search, function($query) use ($search) {
+                return $query->whereHas('cliente', function($q) use ($search) {
+                    $q->where('nombre', 'like', "%$search%");
+                });
+            })
+            ->when($estado, function($query) use ($estado) {
+                return $query->where('estado', $estado);
+            })
+            ->when($fecha_inicio && $fecha_fin, function($query) use ($fecha_inicio, $fecha_fin) {
+                return $query->whereBetween('fecha_emision', [
+                    Carbon::parse($fecha_inicio)->startOfDay(),
+                    Carbon::parse($fecha_fin)->endOfDay()
+                ]);
+            })
+            ->orderBy('fecha_emision', 'desc');
+
+        // Verificar facturas vencidas
+        $facturas = $query->get();
+        foreach ($facturas as $factura) {
+            if ($factura->fecha_vencimiento < Carbon::now() && $factura->estado !== 'vencido') {
+                $factura->estado = 'vencido';
+                $factura->save();
+            }
+        }
+
+        // Volver a ejecutar la consulta con paginación
+        $facturas = $query->paginate(10);
+
+        return view('facturas.index', compact('facturas'));
+    }
+
     // Método para mostrar el formulario de creación de factura
     public function create()
     {
@@ -29,7 +68,6 @@ class FacturaController extends Controller
         $validated['fecha_emision'] = now();
         $validated['fecha_vencimiento'] = now()->addDays(45);
     
-        // 🔹 Aquí creamos la factura antes del `if`
         $factura = Factura::create($validated);
     
         if ($request->expectsJson()) {
@@ -52,10 +90,10 @@ class FacturaController extends Controller
     {
         // Validación de los campos
         $validated = $request->validate([
-            'cliente_id' => 'required|exists:clientes,id', // Validar que el cliente exista
-            'numero_factura' => 'required|unique:facturas,numero_factura,' . $factura->id, // Validar que el número de factura sea único excepto en esta factura
-            'monto_total' => 'required|numeric', // Validar monto
-            'estado' => 'required|in:pendiente,pagado,vencido', // Validar estado
+            'cliente_id' => 'required|exists:clientes,id',
+            'numero_factura' => 'required|unique:facturas,numero_factura,' . $factura->id,
+            'monto_total' => 'required|numeric',
+            'estado' => 'required|in:pendiente,pagado,vencido',
         ]);
 
         // Actualizar los datos de la factura
@@ -75,23 +113,5 @@ class FacturaController extends Controller
         }
 
         return redirect()->route('facturas.index')->with('success', 'Factura eliminada con éxito');
-    }
-
-    // Método para listar todas las facturas
-    public function index()
-    {
-        // Obtener todas las facturas
-        $facturas = Factura::all();
-
-        // Revisar si alguna factura está vencida y actualizar su estado
-        foreach ($facturas as $factura) {
-            // Verificar si la factura está vencida y actualizar el estado
-            if ($factura->fecha_vencimiento < Carbon::now() && $factura->estado !== 'vencido') {
-                $factura->estado = 'vencido';
-                $factura->save();
-            }
-        }
-
-        return view('facturas.index', compact('facturas'));
     }
 }
