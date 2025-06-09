@@ -1,6 +1,6 @@
 <x-guest-layout>
     <div class="text-center mb-6">
-        <img src="{{ asset('jass-unas.jpg') }}" alt="Logo del JASS" class="h-24 mx-auto">
+        <img src="{{ asset('jass-cullpa-alta.jpg') }}" alt="Logo del JASS" class="h-24 mx-auto">
     </div>
     <!-- Mensaje informativo -->
     <div class="mb-6 text-center text-sm text-gray-600 dark:text-gray-400">

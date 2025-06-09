@@ -95,10 +95,10 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo-watermark">JASS CHAMBARA</div>
+            <div class="logo-watermark">JASS CULLPA ALTA</div>
             <h2>COMPROBANTE DE PAGO</h2>
-            <p class="jass-info">JASS CHAMBARA - Servicio de Agua Potable</p>
-            <p class="jass-info">Concepción, Perú</p>
+            <p class="jass-info">JASS CULLPA ALTA - Servicio de Agua Potable</p>
+            <p class="jass-info">El Tambo, Perú</p>
         </div>
         <div class="details">
             <p><strong>Cliente:</strong> <span>{{ $pago->factura->cliente->nombre }}</span></p>
@@ -110,7 +110,7 @@
         </div>
         <div class="footer">
             <p>Gracias por su pago y confianza en nuestro servicio</p>
-            <p><strong>JASS CHAMBARA</strong> - Comprometidos con la calidad del agua potable</p>
+            <p><strong>JASS CULLPA ALTA</strong> - Comprometidos con la calidad del agua potable</p>
             <p style="margin-top: 15px; font-size: 11px;">Este comprobante es válido como documento de pago</p>
         </div>
     </div>

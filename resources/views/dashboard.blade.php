@@ -152,7 +152,7 @@
             <h1 class="text-3xl font-bold text-gray-800 mb-2">
                 JUNTA ADMINISTRADORA DE SERVICIOS DE SANEAMIENTO
             </h1>
-            <p class="text-xl text-gray-600">Chambara - Concepción</p>
+            <p class="text-xl text-gray-600">Cullpa Alta - El Tambo</p>
         </div>
 
         <!-- Filter Controls -->
@@ -295,7 +295,7 @@
                 <i class="fas fa-tint"></i> Cuidemos el agua. ¡Cada gota cuenta!
             </h4>
             <p class="info-message-text">
-                JASS Chambara - Proveedor de agua y servicios de saneamiento para nuestra comunidad.
+                JASS Cullpa Alta - Proveedor de agua y servicios de saneamiento para nuestra comunidad.
                 Reporte cualquier fuga o anomalía en el suministro.
             </p>
         </div>

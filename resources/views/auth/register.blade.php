@@ -2,8 +2,8 @@
     <!-- Contenedor principal con fondo blanco -->
     <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
         <!-- Logo de JASS -->
-        <div class="text-center mb-6">
-            <img src="{{ asset('jass-unas.jpg') }}" alt="Logo del JASS" class="h-24 mx-auto">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">JASS Cullpa Alta</h1><br>
         </div>
 
         <h2 class="text-2xl font-bold text-center mb-6 text-cyan-600">{{ __('Registrarse') }}</h2>

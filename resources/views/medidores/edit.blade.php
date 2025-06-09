@@ -8,7 +8,7 @@
     <div class="text-center mb-8">
         <h2 class="text-3xl font-bold text-gray-800 mb-2">Editar Medidor</h2>
         <div class="w-24 h-1 bg-gradient-to-r from-cyan-400 to-teal-400 mx-auto"></div>
-        <p class="text-gray-600 mt-4">Sistema de Gestión JASS Chambara</p>
+        <p class="text-gray-600 mt-4">Sistema de Gestión JASS Cullpa Alta</p>
     </div>
 
     <form action="{{ route('medidores.update', $medidor->id) }}" method="POST" class="space-y-6">

@@ -5,8 +5,8 @@
     <div class="max-w-md mx-auto bg-white p-10 rounded-xl shadow-sm border border-gray-100">
         <!-- Encabezado elegante -->
         <div class="text-center mb-10">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">JASS Chambara</h1>
-            <p class="text-gray-600">{{ __('Acceso al sistema') }}</p>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">JASS Cullpa Alta</h1>
+            <p class="text-gray-600">{{ __('Acceso al sistema') }}</p><br>
         </div>
 
         <form method="POST" action="{{ route('login') }}">
