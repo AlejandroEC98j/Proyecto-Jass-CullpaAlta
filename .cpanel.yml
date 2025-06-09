@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/xdsdw07tvnp4/jass.indotechsac.com/
+    - /usr/bin/rsync -av --exclude='index.php' public/ $DEPLOYPATH/
