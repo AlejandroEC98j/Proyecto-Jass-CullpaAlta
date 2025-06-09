@@ -14,16 +14,41 @@ class MedidorController extends Controller
         $this->middleware('auth'); // Requiere autenticación
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $medidores = Medidor::with('cliente')->paginate(10);
-        return view('medidores.index', compact('medidores'));
+        try {
+            $search = $request->input('search');
+            $estado = $request->input('estado');
+
+            $medidores = Medidor::with('cliente')
+                ->when($search, function($query) use ($search) {
+                    return $query->where('numero_serie', 'like', "%$search%")
+                        ->orWhereHas('cliente', function($q) use ($search) {
+                            $q->where('nombre', 'like', "%$search%");
+                        });
+                })
+                ->when($estado, function($query) use ($estado) {
+                    return $query->where('estado', $estado);
+                })
+                ->orderBy('id', 'desc')
+                ->paginate(10);
+
+            return view('medidores.index', compact('medidores'));
+        } catch (\Exception $e) {
+            Log::error('Error al obtener medidores: ' . $e->getMessage());
+            return redirect()->route('medidores.index')->with('error', 'Error al cargar los medidores.');
+        }
     }
     
     public function create()
     {
-        $clientes = Cliente::all();
-        return view('medidores.create', compact('clientes'));
+        try {
+            $clientes = Cliente::all();
+            return view('medidores.create', compact('clientes'));
+        } catch (\Exception $e) {
+            Log::error('Error al cargar formulario de creación: ' . $e->getMessage());
+            return redirect()->route('medidores.index')->with('error', 'Error al cargar el formulario.');
+        }
     }
 
     public function store(Request $request)
@@ -46,15 +71,20 @@ class MedidorController extends Controller
 
     public function edit(Medidor $medidor)
     {
-        $clientes = Cliente::all();
-        return view('medidores.edit', compact('medidor', 'clientes'));
+        try {
+            $clientes = Cliente::all();
+            return view('medidores.edit', compact('medidor', 'clientes'));
+        } catch (\Exception $e) {
+            Log::error('Error al cargar formulario de edición: ' . $e->getMessage());
+            return redirect()->route('medidores.index')->with('error', 'Error al cargar el formulario de edición.');
+        }
     }
 
     public function update(Request $request, Medidor $medidor)
     {
         $request->validate([
             'cliente_id' => 'nullable|exists:clientes,id',
-            'numero_serie' => 'required|unique:medidores,numero_serie',
+            'numero_serie' => 'required|unique:medidores,numero_serie,'.$medidor->id,
             'direccion' => 'required',
             'estado' => 'required|in:Activo,Inactivo,Mantenimiento,Dañado'
         ]);
