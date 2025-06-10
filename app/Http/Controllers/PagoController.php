@@ -5,20 +5,38 @@ namespace App\Http\Controllers;
 use App\Models\Pago;
 use App\Models\Factura;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf; // Importar DomPDF
-
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PagoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pagos = Pago::with('factura')->get();
+        $search = $request->input('search');
+        $fecha_inicio = $request->input('fecha_inicio');
+        $fecha_fin = $request->input('fecha_fin');
+
+        $pagos = Pago::with(['factura.cliente'])
+            ->when($search, function($query) use ($search) {
+                return $query->whereHas('factura.cliente', function($q) use ($search) {
+                    $q->where('nombre', 'like', "%$search%");
+                });
+            })
+            ->when($fecha_inicio && $fecha_fin, function($query) use ($fecha_inicio, $fecha_fin) {
+                return $query->whereBetween('fecha_pago', [
+                    Carbon::parse($fecha_inicio)->startOfDay(),
+                    Carbon::parse($fecha_fin)->endOfDay()
+                ]);
+            })
+            ->orderBy('fecha_pago', 'desc')
+            ->paginate(10);
+
         return view('pagos.index', compact('pagos'));
     }
 
     public function create($factura_id)
     {
-        $factura = Factura::findOrFail($factura_id);// Obtener la factura específica
+        $factura = Factura::findOrFail($factura_id);
         return view('pagos.create', compact('factura'));
     }
     
@@ -41,7 +59,6 @@ class PagoController extends Controller
         return redirect()->route('pagos.index')->with('success', 'Pago registrado correctamente.');
     }
     
-
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -65,9 +82,7 @@ class PagoController extends Controller
     public function generarPDF($id)
     {
         $pago = Pago::with('factura.cliente')->findOrFail($id);
-
         $pdf = Pdf::loadView('pagos.pdf', compact('pago'));
-
         return $pdf->download('comprobante_pago.pdf');
     }
 }
